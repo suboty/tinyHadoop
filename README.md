@@ -7,16 +7,15 @@ The Ecosystem will be running as a virtual machine based on [Rocky Linux OS](htt
 ## Versions of components
 - VirtualBox **7.2.20**
 - Rocky Linux **10.2**
-- Apache Hadoop **x.x.x**
-- Apache Spark **x.x.x**
-- Apache Hive **x.x.x**
-- Apache HBase **x.x.x**
-- Apache Cassandra **x.x.x**
-- Apache Kafka **x.x.x**
-- Apache Flume **x.x.x**
-- Apache NiFi **x.x.x**
-- MariaDB **x.x.x**
-- Python **x.x.x**
+- Apache Hadoop **3.5.0**
+- Apache Spark **4.2.0**
+- Apache Hive **4.2.1**
+- Apache HBase **2.6.7**
+- Apache Cassandra **5.0.9**
+- Apache Kafka **4.3.1**
+- Apache Flume **1.11.0**
+- MariaDB **15.1**
+- Python **3.14.7**
 
 ## Steps
 ### Step 1. Prepare VM
@@ -41,7 +40,7 @@ The Ecosystem will be running as a virtual machine based on [Rocky Linux OS](htt
   - Go to VM and update or installnecessery packages:
     ```bash
     sudo dnf install -y gcc kernel-devel kernel-headers
-    sudo dnf install -y make bzip2 perl dkms
+    sudo dnf install -y make bzip2 perl dkms wget
     ```
   - Now we need to install Guest Additions:
     ```bash
