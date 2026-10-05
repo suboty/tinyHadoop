@@ -24,22 +24,41 @@ The Ecosystem will be running as a virtual machine based on [Rocky Linux OS](htt
 - Download the Rocky Linux image [here](https://www.rockylinux.org/download)
 - Create a new virtual machine with Rocky Linux iso. See the example [here](https://docs.rockylinux.org/10/guides/virtualization/vbox-rocky).
 - Now we need mount this repository to our VM.
-  - Go to VM and update necessery packages:
+  - First and the most important action:
     ```bash
     sudo dnf update
     sudo dnf install -y epel-release
-    sudo dnf install -y gcc kernel-devel kernel-headers make bzip2 perl dkms
+    ```
+  - (Extra settings). You can set the font size. Fir this do this steps:
+    ```bash
+    sudo dnf install -y nano
+    sudo nano /etc/vconsole.conf
+    ```
+    Next change this settinыg:
+    ```
+    FONT=latarcyrheb-sun32
+    ```
+  - Go to VM and update or installnecessery packages:
+    ```bash
+    sudo dnf install -y gcc kernel-devel kernel-headers
+    sudo dnf install -y make bzip2 perl dkms
     ```
   - Now we need to install Guest Additions:
     ```bash
-    sudo dnf install -y centos-release-kmods
-    sudo dnf install -y kmod-vbox-guest-additions
+    sudo dnf install -y gcc make perl bzip2 dkms kernel-headers
+    sudo dnf install -y "kernel-devel-uname-r == $(uname -r)"
+    rpm -q kernel-devel && uname -r
+    sudo mkdir -p /mnt/cdrom
+    sudo mount /dev/sr0 /mnt/cdrom
+    ls /mnt/cdroml
+    sudo /mnt/cdrom/VBoxLinuxAdditions.run --nox11
+    sudo umount /mnt/cdrom
+    sudo modprobe vboxsf
     sudo systemctl reboot
     ```
   - After reboot, check Guest Additions:
     ```bash
-    systemctl status vboxclient
-    lsmod | grep vboxguest
+    lsmod | grep vbox
     ```
   - Then we need to mount our shared directory (with this repository) to VM. We can read about it [here](https://www.virtualbox.org/manual/ch04.html#sharedfolders).
   - At the end we need to add our user to the `vboxsf` group:
