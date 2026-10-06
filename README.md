@@ -65,6 +65,12 @@ The Ecosystem will be running as a virtual machine based on [Rocky Linux OS](htt
     sudo usermod -aG vboxsf $USER
     ```
 - Profit! Now we can to run all scripts and docker containers from this repository.
+### Step 2. Hadoop components installing
+Run bash-script `install-hadoop-components.sh` to install Hadoop components in VM:
+```bash
+bash /mnt/install-hadoop-components.sh
+```
+You may need to run it with `sudo` if you encounter permission issues.
 
 ## License
 
