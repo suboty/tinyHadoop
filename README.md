@@ -65,12 +65,29 @@ The Ecosystem will be running as a virtual machine based on [Rocky Linux OS](htt
     sudo usermod -aG vboxsf $USER
     ```
 - Profit! Now we can to run all scripts and docker containers from this repository.
+
 ### Step 2. Hadoop components installing
 Run bash-script `install-hadoop-components.sh` to install Hadoop components in VM:
 ```bash
 bash /mnt/install-hadoop-components.sh
 ```
 You may need to run it with `sudo` if you encounter permission issues.
+
+### Step 3. Prepare HDFS
+Run `prepare-hdfs.sh` to prepare HDFS:
+```bash
+cp /mnt/prepare-hdfs.sh ~/
+chmod +x ~/prepare-hdfs.sh
+sudo ./prepare-hdfs.sh
+sudo reboot
+```
+After reboot, HDFS should be ready to use.
+And check it with:
+```bash
+systemctl status hdfs yarn
+su - hadoop
+jps
+```
 
 ## License
 
