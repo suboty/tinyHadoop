@@ -229,6 +229,16 @@ EOF
     chown "$STUDENT_USER:$STUDENT_USER" "$BR"
 fi
 
+if ! grep -q "source ~/.bashrc" "/home/$STUDENT_USER/.bash_profile" 2>/dev/null; then
+    info "Ensuring .bash_profile sources .bashrc for $STUDENT_USER..."
+    echo 'source ~/.bashrc' >> "/home/$STUDENT_USER/.bash_profile"
+    chown "$STUDENT_USER:$STUDENT_USER" "/home/$STUDENT_USER/.bash_profile"
+fi
+
+info "Opening read access to Hadoop for $STUDENT_USER..."
+chmod 755 "/home/$HADOOP_USER"
+chmod -R o+rx "$HADOOP_DST"
+
 NAMENODE_DIR="/home/$HADOOP_USER/hadoopdata/hdfs/namenode"
 if [ ! -d "$NAMENODE_DIR/current" ]; then
     info "Formatting HDFS NameNode..."
@@ -322,15 +332,13 @@ sudo -u "$HADOOP_USER" bash -lc "
 " || warn "Failed to create HDFS directories. Check logs: journalctl -u hdfs"
 
 info "Final verification:"
-echo "--- Java ---"
+echo "Java"
 java -version 2>&1 | head -1
-echo "--- jps (as $HADOOP_USER) ---"
+echo "jps (as $HADOOP_USER)"
 sudo -u "$HADOOP_USER" bash -lc "jps" 2>/dev/null || true
-echo "--- hdfs.service ---"
-systemctl is-active hdfs.service
-echo "--- yarn.service ---"
-systemctl is-active yarn.service
-echo "--- HDFS root ---"
+echo "hdfs.service: $(systemctl is-active hdfs.service)"
+echo "yarn.service: $(systemctl is-active yarn.service)"
+echo "HDFS root (as $HADOOP_USER)"
 sudo -u "$HADOOP_USER" bash -lc "hdfs dfs -ls /" 2>/dev/null || warn "HDFS is not responding yet."
 
 info "Done."
