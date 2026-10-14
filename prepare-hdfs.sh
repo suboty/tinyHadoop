@@ -121,6 +121,26 @@ cat > "$HADOOP_CONF/yarn-site.xml" <<'EOF'
         <name>yarn.nodemanager.env-whitelist</name>
         <value>JAVA_HOME,HADOOP_COMMON_HOME,HADOOP_HDFS_HOME,HADOOP_CONF_DIR,CLASSPATH_PREPEND_DISTCACHE,HADOOP_YARN_HOME,HADOOP_MAPRED_HOME</value>
     </property>
+    <property>
+        <name>yarn.application.classpath</name>
+        <value>$HADOOP_CONF_DIR,$HADOOP_COMMON_HOME/*,$HADOOP_COMMON_HOME/lib/*,$HADOOP_HDFS_HOME/*,$HADOOP_HDFS_HOME/lib/*,$HADOOP_MAPRED_HOME/*,$HADOOP_MAPRED_HOME/lib/*,$HADOOP_YARN_HOME/*,$HADOOP_YARN_HOME/lib/*</value>
+    </property>
+    <property>
+        <name>yarn.log-aggregation-enable</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>yarn.nodemanager.remote-app-log-dir</name>
+        <value>/tmp/logs</value>
+    </property>
+    <property>
+        <name>yarn.log.server.url</name>
+        <value>http://localhost:19888/jobhistory/logs</value>
+    </property>
+    <property>
+        <name>yarn.nodemanager.log.retain-seconds</name>
+        <value>10800</value>
+    </property>
 </configuration>
 EOF
 
@@ -136,6 +156,18 @@ cat > "$HADOOP_CONF/mapred-site.xml" <<'EOF'
     <property>
         <name>mapreduce.application.classpath</name>
         <value>$HADOOP_HOME/share/hadoop/mapreduce/*:$HADOOP_HOME/share/hadoop/mapreduce/lib/*</value>
+    </property>
+    <property>
+        <name>yarn.app.mapreduce.am.env</name>
+        <value>HADOOP_MAPRED_HOME=/home/hadoop/hadoop</value>
+    </property>
+    <property>
+        <name>mapreduce.map.env</name>
+        <value>HADOOP_MAPRED_HOME=/home/hadoop/hadoop</value>
+    </property>
+    <property>
+        <name>mapreduce.reduce.env</name>
+        <value>HADOOP_MAPRED_HOME=/home/hadoop/hadoop</value>
     </property>
 </configuration>
 EOF
@@ -225,6 +257,10 @@ export JAVA_HOME=$JAVA_HOME_PATH
 export HADOOP_HOME=/home/$HADOOP_USER/hadoop
 export HADOOP_CONF_DIR=\$HADOOP_HOME/etc/hadoop
 export PATH=\$HADOOP_HOME/bin:\$HADOOP_HOME/sbin:\$PATH
+export HADOOP_MAPRED_HOME=\$HADOOP_HOME
+export HADOOP_COMMON_HOME=\$HADOOP_HOME
+export HADOOP_HDFS_HOME=\$HADOOP_HOME
+export YARN_HOME=\$HADOOP_HOME
 EOF
     chown "$STUDENT_USER:$STUDENT_USER" "$BR"
 fi
@@ -264,6 +300,10 @@ Group=$HADOOP_USER
 Environment=JAVA_HOME=$JAVA_HOME_PATH
 Environment=HADOOP_HOME=/home/$HADOOP_USER/hadoop
 Environment=HADOOP_CONF_DIR=/home/$HADOOP_USER/hadoop/etc/hadoop
+Environment=HADOOP_MAPRED_HOME=/home/$HADOOP_USER/hadoop
+Environment=HADOOP_COMMON_HOME=/home/$HADOOP_USER/hadoop
+Environment=HADOOP_HDFS_HOME=/home/$HADOOP_USER/hadoop
+Environment=YARN_HOME=/home/$HADOOP_USER/hadoop
 ExecStart=/home/$HADOOP_USER/hadoop/sbin/start-dfs.sh
 ExecStop=/home/$HADOOP_USER/hadoop/sbin/stop-dfs.sh
 TimeoutStartSec=300
@@ -287,6 +327,10 @@ Group=$HADOOP_USER
 Environment=JAVA_HOME=$JAVA_HOME_PATH
 Environment=HADOOP_HOME=/home/$HADOOP_USER/hadoop
 Environment=HADOOP_CONF_DIR=/home/$HADOOP_USER/hadoop/etc/hadoop
+Environment=HADOOP_MAPRED_HOME=/home/$HADOOP_USER/hadoop
+Environment=HADOOP_COMMON_HOME=/home/$HADOOP_USER/hadoop
+Environment=HADOOP_HDFS_HOME=/home/$HADOOP_USER/hadoop
+Environment=YARN_HOME=/home/$HADOOP_USER/hadoop
 ExecStart=/home/$HADOOP_USER/hadoop/sbin/start-yarn.sh
 ExecStop=/home/$HADOOP_USER/hadoop/sbin/stop-yarn.sh
 TimeoutStartSec=300
@@ -345,4 +389,3 @@ info "Done."
 info "Users: hadoop/hadoop, student/student"
 info "Hadoop installed at: /home/$HADOOP_USER/hadoop"
 info "Alice file: $ALICE"
-info "Web UIs: NameNode http://localhost:9870, YARN http://localhost:8088"
