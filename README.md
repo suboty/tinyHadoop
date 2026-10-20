@@ -89,6 +89,23 @@ su - hadoop
 jps
 ```
 
+### Step 4. Prepare Flume
+Run `prepare-flume.sh` to install Apache Flume and generate test data:
+```bash
+cp /mnt/prepare-flume.sh ~/
+chmod +x ~/prepare-flume.sh
+sudo ./prepare-flume.sh
+```
+After the script finishes, switch to the `student` user and reload the environment variables (required to make the `flume-ng` command available):
+```bash
+su - student
+source ~/.bashrc
+```
+Check that Flume is installed and accessible:
+```bash
+flume-ng version
+```
+
 ## License
 
 **MIT** — use it freely, keep the copyright notice.
