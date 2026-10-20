@@ -105,6 +105,10 @@ cat > "$HADOOP_CONF/hdfs-site.xml" <<'EOF'
         <name>dfs.datanode.data.dir</name>
         <value>file:///home/hadoop/hadoopdata/hdfs/datanode</value>
     </property>
+    <property>
+        <name>dfs.namenode.safemode.threshold-pct</name>
+        <value>0.99</value>
+    </property>
 </configuration>
 EOF
 
@@ -123,7 +127,7 @@ cat > "$HADOOP_CONF/yarn-site.xml" <<'EOF'
     </property>
     <property>
         <name>yarn.application.classpath</name>
-        <value>$HADOOP_CONF_DIR,$HADOOP_COMMON_HOME/*,$HADOOP_COMMON_HOME/lib/*,$HADOOP_HDFS_HOME/*,$HADOOP_HDFS_HOME/lib/*,$HADOOP_MAPRED_HOME/*,$HADOOP_MAPRED_HOME/lib/*,$HADOOP_YARN_HOME/*,$HADOOP_YARN_HOME/lib/*</value>
+        <value>/home/hadoop/hadoop/etc/hadoop:/home/hadoop/hadoop/share/hadoop/common/lib/*:/home/hadoop/hadoop/share/hadoop/common/*:/home/hadoop/hadoop/share/hadoop/hdfs/lib/*:/home/hadoop/hadoop/share/hadoop/hdfs/*:/home/hadoop/hadoop/share/hadoop/mapreduce/lib/*:/home/hadoop/hadoop/share/hadoop/mapreduce/*:/home/hadoop/hadoop/share/hadoop/yarn:/home/hadoop/hadoop/share/hadoop/yarn/lib/*:/home/hadoop/hadoop/share/hadoop/yarn/*</value>
     </property>
     <property>
         <name>yarn.log-aggregation-enable</name>
