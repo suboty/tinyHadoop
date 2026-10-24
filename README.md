@@ -1,11 +1,11 @@
 # tinyHadoop
 
-Scripts, dockerfiles and etc. for locally running [Hadoop](https://hadoop.apache.org) for educational purposes.
+Bash and Python Scripts for locally running [Hadoop](https://hadoop.apache.org) for educational purposes.
 
 The Ecosystem will be running as a virtual machine based on [Rocky Linux OS](https://rockylinux.org).
 
 ## Versions of components
-- VirtualBox **7.2.20**
+- VirtualBox **7.2**
 - Rocky Linux **10.2**
 - Apache Hadoop **3.5.0**
 - Apache Spark **4.2.0**
@@ -69,7 +69,8 @@ The Ecosystem will be running as a virtual machine based on [Rocky Linux OS](htt
 ### Step 2. Hadoop components installing
 Run bash-script `install-hadoop-components.sh` to install Hadoop components in VM:
 ```bash
-bash /mnt/install-hadoop-components.sh
+cd /mnt
+./install-hadoop-components.sh
 ```
 You may need to run it with `sudo` if you encounter permission issues.
 
@@ -87,6 +88,11 @@ And check it with:
 systemctl status hdfs yarn
 su - hadoop
 jps
+```
+If you encounter any issues starting YARN, run the script:
+```bash
+cd /mnt/misc/
+./fix-yarn-ports.sh
 ```
 
 ### Step 4. Prepare Flume
