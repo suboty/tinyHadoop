@@ -113,7 +113,7 @@ flume-ng version
 ```
 
 ### Step 5. Prepare Kafka
-Run `prepare-flume.sh` to install and prepare Apache Kafka for work:
+Run `prepare-kafka.sh` to install and prepare Apache Kafka for work:
 ```bash
 cp /mnt/prepare-kafka.sh ~/
 chmod +x ~/prepare-kafka.sh
