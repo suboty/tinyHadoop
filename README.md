@@ -112,6 +112,19 @@ Check that Flume is installed and accessible:
 flume-ng version
 ```
 
+### Step 5. Prepare Kafka
+Run `prepare-flume.sh` to install and prepare Apache Kafka for work:
+```bash
+cp /mnt/prepare-kafka.sh ~/
+chmod +x ~/prepare-kafka.sh
+sudo ./prepare-kafka.sh
+```
+After the script finishes, switch to the `student` user and reload the environment variables:
+```bash
+su - student
+source ~/.bashrc
+```
+
 ## License
 
 **MIT** — use it freely, keep the copyright notice.
