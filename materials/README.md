@@ -5,3 +5,4 @@ This course was inspired by Samsung's **Big Data** educational program, particul
 Matherials:
 - HDFS and Yarn - [lab in Russian](ru/HDFS_YARN.md)
 - Flume - [lab in Russian](ru/Flume.md)
+- Kafka - [lab in Russian](ru/Kafka.md)
