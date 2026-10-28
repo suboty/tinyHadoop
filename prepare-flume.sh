@@ -27,6 +27,7 @@ FLUME_ENV="$FLUME_DIR/conf/flume-env.sh"
 cp "$FLUME_TEMPLATE_ENV" "$FLUME_ENV"
 sudo -u "$FLUME_USER" bash -c "cat > $FLUME_ENV" <<EOF
 export JAVA_OPTS="-Xmx512m -Dlog4j.configurationFile=$FLUME_DIR/conf/log4j2.xml"
+export JAVA_HOME=/usr/lib/jvm/java-21-openjdk
 EOF
 
 info "3. Patching log4j2.xml to show events in console..."
