@@ -14,8 +14,9 @@
 
 Этот агент позволяет генерировать события и последовательно логировать их в консоль (в нашем случае — в лог-файл).
 
-**1.1.** Создайте рабочий каталог и перейдите в него:
+**1.1.** Войдите как пользователь `student` и создайте рабочий каталог и перейдите в него:
 ```bash
+su - student
 mkdir -p ~/flume
 cd ~/flume
 ```
@@ -44,7 +45,7 @@ agent1.channels.memChannel.capacity = 100
 
 **1.3.** Запустите агент Flume в фоновом режиме, перенаправив весь вывод в файл `flume_agent1.log`:
 ```bash
-FLUME_JAVA_OPTS="-Xmx512m" flume-ng agent --name agent1 --conf-file transfer.conf > flume_agent1.log 2>&1 &
+flume-ng agent --name agent1 --conf /opt/flume/conf --conf-file transfer.conf > flume_agent1.log 2>&1 &
 ```
 
 **1.4.** Убедитесь, что агент запустился, и начните отслеживать его лог в реальном времени. Оставьте эту команду работать:
@@ -103,7 +104,7 @@ mkdir -p /home/student/flume/output
 
 **2.3.** Запустите агент `agent2` в фоновом режиме:
 ```bash
-FLUME_JAVA_OPTS="-Xmx512m" flume-ng agent --name agent2 --conf-file transfer_spool.conf > flume_agent2.log 2>&1 &
+flume-ng agent --name agent2 --conf /opt/flume/conf --conf-file transfer_spool.conf > flume_agent2.log 2>&1 &
 ```
 
 **2.4.** Запустите отслеживание лога:
@@ -172,7 +173,7 @@ agent3.sources.netcatSrc.interceptors.i1.hostHeader = hostname
 
 **3.2.** Запустите `agent3` в фоне:
 ```bash
-FLUME_JAVA_OPTS="-Xmx512m" flume-ng agent --name agent3 --conf-file interceptor.conf > flume_agent3.log 2>&1 &
+flume-ng agent --name agent3 --conf /opt/flume/conf --conf-file interceptor.conf > flume_agent3.log 2>&1 &
 ```
 
 **3.3.** Запустите отслеживание лога:
@@ -212,7 +213,8 @@ pkill -f "agent3"
 
 **4.2.** Запустите агент в фоне и запустите `tail -f` на его лог:
 ```bash
-FLUME_JAVA_OPTS="-Xmx512m" flume-ng agent --name agent4 --conf-file my_flow.conf > flume_agent4.log 2>&1 &
+flume-ng agent --name agent4 --conf /opt/flume/conf --conf-file my_flow.conf > flume_agent4.log 2>&1 &
+
 tail -f flume_agent4.log
 ```
 
