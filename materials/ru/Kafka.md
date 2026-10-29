@@ -54,6 +54,23 @@ tail -f producer.log
 ```
 Вы увидите, как в логе появляются строки `Sent: ...` — это значит, что данные уходят в Kafka. Нажмите `Ctrl+C`, чтобы остановить просмотр лога (сам скрипт продолжит работать в фоне).
 
+**2.3** Проверим данные в топике Kafka, переключимся в пользователя `root`:
+```bash
+su - root
+```
+
+Перейдите в директорию с Kafka (`~/tinyHadoop/kafka`):
+```bash
+cd ~/tinyHadoop/kafka
+```
+
+Проверим, есть ли данные в топике, создадим тестовый consumer и посмотрим первые 10 сообщений:
+```bash
+bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic stream_text --from-beginning --max-messages 10
+```
+
+Если вы увидете часть книги «Алиса в стране чудес», то producer успешно отправил сообщения в Kafka
+
 ---
 
 ## 3. Подготовка HDFS
@@ -70,12 +87,12 @@ hdfs dfsadmin -safemode leave
 
 Создайте директорию (`/user/student/kafka_data`) для пользователя `student`:
 ```bash
-hdfs dfs -mkdir /user/student/kafka_data
+hdfs dfs -mkdir -p /user/student/kafka_data
 ```
 
-Передайте права на директорию пользователю `student`:
+Далее мы позволяем *любому* пользователю писать в директорию:
 ```bash
-hdfs dfs -chown student /user/student/kafka_data
+hdfs dfs -chmod -R 777 /user/student/kafka_data
 ```
 
 Переключитесь обратно в пользователя `student`:
@@ -104,10 +121,12 @@ agent.sources.kafkaSource.channels = memChannel
 agent.sources.kafkaSource.kafka.bootstrap.servers = localhost:9092
 agent.sources.kafkaSource.kafka.topics = stream_text
 agent.sources.kafkaSource.kafka.consumer.group.id = flume-consumer-group
+agent.sources.kafkaSource.batchDurationMillis = 1000
+agent.sources.kafkaSource.batchSize = 10
 
 agent.sinks.hdfsSink.type = hdfs
 agent.sinks.hdfsSink.channel = memChannel
-agent.sinks.hdfsSink.hdfs.path = /user/student/kafka_data/
+agent.sinks.hdfsSink.hdfs.path = hdfs://localhost:9000/user/student/kafka_data/
 agent.sinks.hdfsSink.hdfs.filePrefix = alice-
 agent.sinks.hdfsSink.hdfs.fileType = DataStream
 agent.sinks.hdfsSink.hdfs.writeFormat = Text
@@ -115,14 +134,23 @@ agent.sinks.hdfsSink.hdfs.rollInterval = 10
 agent.sinks.hdfsSink.hdfs.rollSize = 0
 agent.sinks.hdfsSink.hdfs.rollCount = 0
 
-agent.channels.memChannel.type = memory
-agent.channels.memChannel.capacity = 10000
-agent.channels.memChannel.transactionCapacity = 1000
+agent.channels.memChannel.type = file
+agent.channels.memChannel.checkpointDir = /home/student/flume/checkpoint
+agent.channels.memChannel.dataDirs = /home/student/flume/data
+agent.channels.memChannel.capacity = 100000
+agent.channels.memChannel.transactionCapacity = 100
 ```
 
-**4.2.** Запустите агент Flume в фоне:
+Каналом в нашем агенте будет файл, поэтому его надо заранее создать:
 ```bash
-flume-ng agent --name agent --conf /opt/flume/conf --conf-file ~/flume/kafka-to-hdfs.conf > flume_hdfs.log 2>&1 &
+mkdir -p ~/flume/checkpoint
+mkdir -p ~/flume/data
+chown -R student ~/flume
+```
+
+**4.2.** Запустите агент Flume в фоне, обратите внимание, мы запускаем агента с HTTP-мониторингом:
+```bash
+flume-ng agent --name agent --conf /opt/flume/conf --conf-file ~/flume/kafka-to-hdfs.conf -Dflume.monitoring.type=http -Dflume.monitoring.port=34545 > flume_hdfs.log 2>&1 &
 ```
 
 **4.3.** Отслеживайте работу Flume:
@@ -130,6 +158,11 @@ flume-ng agent --name agent --conf /opt/flume/conf --conf-file ~/flume/kafka-to-
 tail -f flume_hdfs.log
 ```
 Вы должны увидеть сообщения о том, что Flume подключился к Kafka и начал обрабатывать события. Нажмите `Ctrl+C`, чтобы остановить просмотр.
+
+Также мы можем посмотреть работы Flume через команду-запрос к HTTP-порту, где собираются метрики:
+```bash
+curl -s http://localhost:34545/metrics | python3.14 -m json.tool
+```
 
 ---
 
