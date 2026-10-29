@@ -17,7 +17,7 @@
 **1.1.** Войдите как пользователь `root` и перейдите в директорию с Kafka (`~/tinyHadoop/kafka`):
 ```bash
 su - root
-cd ~/kafka
+cd ~/tinyHadoop/kafka
 ```
 
 **1.2.** Запустите сервер Kafka в фоновом режиме, перенаправив его логи в файл `kafka.log`:
@@ -45,7 +45,7 @@ bin/kafka-topics.sh --create --topic stream_text --bootstrap-server localhost:90
 
 **2.1.** Войдите как пользователь `student` и запустите скрипт продюсера в фоновом режиме:
 ```bash
-python3 /mnt/kafka_producer.py > producer.log 2>&1 &
+python3.14 /mnt/kafka_producer.py > producer.log 2>&1 &
 ```
 
 **2.2.** Отслеживайте работу продюсера через лог:
@@ -56,11 +56,40 @@ tail -f producer.log
 
 ---
 
-## 3. Настройка Flume для перенаправления данных в HDFS
+## 3. Подготовка HDFS
+
+Теперь подготовить HDFS к принятию данных из Kafka. Переключимся в пользователя `hadoop`:
+```bash
+su - hadoop
+```
+
+Выключите у HDFS безопасный режим работы (запрещает изменения в ФС):
+```bash
+hdfs dfsadmin -safemode leave
+```
+
+Создайте директорию (`/user/student/kafka_data`) для пользователя `student`:
+```bash
+hdfs dfs -mkdir /user/student/kafka_data
+```
+
+Передайте права на директорию пользователю `student`:
+```bash
+hdfs dfs -chown student /user/student/kafka_data
+```
+
+Переключитесь обратно в пользователя `student`:
+```bash
+su - student
+```
+
+---
+
+## 4. Настройка Flume для перенаправления данных в HDFS
 
 Теперь настроим Flume так, чтобы он забирал данные из топика Kafka и сохранял их в HDFS.
 
-**3.1.** Создайте конфигурационный файл для Flume:
+**4.1.** Создайте конфигурационный файл для Flume:
 ```bash
 nano ~/flume/kafka-to-hdfs.conf
 ```
@@ -82,7 +111,7 @@ agent.sinks.hdfsSink.hdfs.path = /user/student/kafka_data/
 agent.sinks.hdfsSink.hdfs.filePrefix = alice-
 agent.sinks.hdfsSink.hdfs.fileType = DataStream
 agent.sinks.hdfsSink.hdfs.writeFormat = Text
-agent.sinks.hdfsSink.hdfs.rollInterval = 30
+agent.sinks.hdfsSink.hdfs.rollInterval = 10
 agent.sinks.hdfsSink.hdfs.rollSize = 0
 agent.sinks.hdfsSink.hdfs.rollCount = 0
 
@@ -91,12 +120,12 @@ agent.channels.memChannel.capacity = 10000
 agent.channels.memChannel.transactionCapacity = 1000
 ```
 
-**3.2.** Запустите агент Flume в фоне (обратите внимание на флаг `-Dflume.root.logger=INFO,console`, он нужен, чтобы логи писались в консоль, а мы перенаправим их в файл):
+**4.2.** Запустите агент Flume в фоне:
 ```bash
-JAVA_HOME=~/java17 FLUME_JAVA_OPTS="-Xmx512m" flume-ng agent --name agent --conf-file ~/flume/kafka-to-hdfs.conf -Dflume.root.logger=INFO,console > flume_hdfs.log 2>&1 &
+flume-ng agent --name agent --conf /opt/flume/conf --conf-file ~/flume/kafka-to-hdfs.conf > flume_hdfs.log 2>&1 &
 ```
 
-**3.3.** Отслеживайте работу Flume:
+**4.3.** Отслеживайте работу Flume:
 ```bash
 tail -f flume_hdfs.log
 ```
@@ -104,17 +133,18 @@ tail -f flume_hdfs.log
 
 ---
 
-## 4. Проверка результата в HDFS
+## 5. Проверка результата в HDFS
 
-**4.1.** Подождите около 30–60 секунд (Flume настроен на создание файла в HDFS каждые 30 секунд: `rollInterval = 30`).
+**5.1.** Подождите около 10–20 секунд (Flume настроен на создание файла в HDFS каждые 10 секунд: `rollInterval = 10`).
 
-**4.2.** Проверьте содержимое HDFS:
+**5.2.** Переключитесь на пользователя `hadoop` и проверьте содержимое HDFS:
 ```bash
+su - hadoop
 hdfs dfs -ls /user/student/kafka_data/
 ```
 Вы должны увидеть файлы с префиксом `alice-`.
 
-**4.3.** Посмотрите содержимое одного из файлов, чтобы убедиться, что данные дошли:
+**5.3.** Посмотрите содержимое одного из файлов, чтобы убедиться, что данные дошли:
 ```bash
 hdfs dfs -cat /user/student/kafka_data/alice-* | head -n 20
 ```
@@ -122,7 +152,12 @@ hdfs dfs -cat /user/student/kafka_data/alice-* | head -n 20
 
 ---
 
-## 5. Остановка всех служб
+## 6. Остановка всех служб
+
+Переключитесь в пользователя `student`:
+```bash
+su - student
+```
 
 После завершения работы остановите все фоновые процессы:
 ```bash
