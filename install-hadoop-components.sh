@@ -145,7 +145,6 @@ echo "HBase: $INSTALL_DIR/hbase"
 echo "Cassandra: $INSTALL_DIR/cassandra"
 echo "Kafka: $INSTALL_DIR/kafka"
 echo "Flume: $INSTALL_DIR/flume"
-echo "MariaDB: $(mariadb --version 2>/dev/null || echo 'see systemctl status mariadb')"
 echo "Python: $(python3.14 --version)"
 
 info "Done!"

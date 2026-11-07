@@ -6,3 +6,4 @@ Matherials:
 - HDFS and Yarn - [lab in Russian](ru/HDFS_YARN.md)
 - Flume - [lab in Russian](ru/Flume.md)
 - Kafka - [lab in Russian](ru/Kafka.md)
+- Cassandra - [lab in Russian](ru/Cassandra.md)

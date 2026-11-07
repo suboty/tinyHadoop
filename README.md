@@ -14,7 +14,6 @@ The Ecosystem will be running as a virtual machine based on [Rocky Linux OS](htt
 - Apache Cassandra **5.0.9**
 - Apache Kafka **4.3.1**
 - Apache Flume **1.11.0**
-- MariaDB **15.1**
 - Python **3.14.7**
 
 ## Steps
@@ -118,6 +117,19 @@ Run `prepare-kafka.sh` to install and prepare Apache Kafka for work:
 cp /mnt/prepare-kafka.sh ~/
 chmod +x ~/prepare-kafka.sh
 sudo ./prepare-kafka.sh
+```
+After the script finishes, switch to the `student` user and reload the environment variables:
+```bash
+su - student
+source ~/.bashrc
+```
+
+### Step 6. Prepare Cassandra
+Run `prepare-cassandra.sh` to install and prepare Apache Kafka for work:
+```bash
+cp /mnt/prepare-cassandra.sh ~/
+chmod +x ~/prepare-cassandra.sh
+sudo ./prepare-cassandra.sh
 ```
 After the script finishes, switch to the `student` user and reload the environment variables:
 ```bash
