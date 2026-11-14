@@ -125,11 +125,24 @@ source ~/.bashrc
 ```
 
 ### Step 6. Prepare Cassandra
-Run `prepare-cassandra.sh` to install and prepare Apache Kafka for work:
+Run `prepare-cassandra.sh` to install and prepare Apache Cassandra for work:
 ```bash
 cp /mnt/prepare-cassandra.sh ~/
 chmod +x ~/prepare-cassandra.sh
 sudo ./prepare-cassandra.sh
+```
+After the script finishes, switch to the `student` user and reload the environment variables:
+```bash
+su - student
+source ~/.bashrc
+```
+
+### Step 7. Prepare HBase
+Run `prepare-hbase.sh` to install and prepare Apache HBase for work:
+```bash
+cp /mnt/prepare-hbase.sh ~/
+chmod +x ~/prepare-hbase.sh
+sudo ./prepare-hbase.sh
 ```
 After the script finishes, switch to the `student` user and reload the environment variables:
 ```bash
