@@ -7,3 +7,4 @@ Matherials:
 - Flume - [lab in Russian](ru/Flume.md)
 - Kafka - [lab in Russian](ru/Kafka.md)
 - Cassandra - [lab in Russian](ru/Cassandra.md)
+- HBase - [lab in Russian](ru/HBase.md)
